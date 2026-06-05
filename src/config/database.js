@@ -18,9 +18,10 @@ const connectDatabase = async () => {
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     try {
       await mongoose.connect(uri, {
-        maxPoolSize:              10,
-        serverSelectionTimeoutMS: 5000,
-        socketTimeoutMS:          45000,
+        maxPoolSize:              process.env.VERCEL ? 5 : 10,
+        serverSelectionTimeoutMS: 8000,   // fail fast on Vercel cold start
+        socketTimeoutMS:          30000,
+        bufferCommands:           false,  // don't buffer queries before connected
       })
       logger.info('✅ MongoDB connected')
       return
