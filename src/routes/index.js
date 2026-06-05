@@ -1,7 +1,22 @@
 const { Router } = require('express')
 const router = Router()
 
-router.get('/health', (req, res) => res.json({ status: 'ok', timestamp: new Date().toISOString() }))
+router.get('/health', (req, res) => {
+  const mongoose = require('mongoose')
+  const dbStates = ['disconnected', 'connected', 'connecting', 'disconnecting']
+
+  const missing = ['MONGODB_URI', 'JWT_SECRET', 'NODE_ENV']
+    .filter(k => !process.env[k])
+
+  res.json({
+    status:    missing.length === 0 ? 'ok' : 'degraded',
+    timestamp: new Date().toISOString(),
+    env:       process.env.NODE_ENV || 'unknown',
+    db:        dbStates[mongoose.connection.readyState] || 'unknown',
+    redis:     process.env.REDIS_URL ? 'configured' : 'not configured (optional)',
+    missing_env: missing.length > 0 ? missing : undefined,
+  })
+})
 
 router.use('/auth',         require('./auth.routes'))
 router.use('/users',        require('./user.routes'))
