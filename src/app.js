@@ -19,7 +19,21 @@ const app = express();
 
 // ── Security ──────────────────────────────────────────────────────────────
 app.use(helmet());
-app.use(cors({ origin: ['http://localhost:3000'], credentials: true }));
+
+// Allow CLIENT_URL env var (comma-separated for multiple origins)
+const allowedOrigins = (process.env.CLIENT_URL || 'http://localhost:3000')
+  .split(',')
+  .map(o => o.trim())
+  .filter(Boolean)
+
+app.use(cors({
+  origin: (origin, cb) => {
+    // Allow requests with no origin (mobile apps, curl, Postman)
+    if (!origin || allowedOrigins.includes(origin)) return cb(null, true)
+    cb(new Error(`CORS: origin ${origin} not allowed`))
+  },
+  credentials: true,
+}))
 app.use(mongoSanitize());                // prevent MongoDB operator injection
 app.use(rateLimit({ windowMs: 15 * 60 * 1000, max: 500 }));
 
