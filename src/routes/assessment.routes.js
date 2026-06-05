@@ -1,0 +1,13 @@
+const { Router } = require('express')
+const c = require('../controllers/assessment.controller')
+const { authenticate } = require('../middleware/auth.middleware')
+const { requireRole } = require('../middleware/rbac.middleware')
+const { ROLES } = require('../constants/roles.constants')
+const router = Router()
+router.use(authenticate)
+router.post('/',                               requireRole(ROLES.INSTRUCTOR, ROLES.ORG_ADMIN), c.createAssessment)
+router.get('/:id',                             c.getAssessment)
+router.post('/:assessmentId/attempts',         requireRole(ROLES.LEARNER), c.startAttempt)
+router.post('/attempts/:attemptId/submit',     requireRole(ROLES.LEARNER), c.submitAttempt)
+router.get('/attempts/:attemptId/result',      c.getAttemptResult)
+module.exports = router

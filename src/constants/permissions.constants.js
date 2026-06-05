@@ -1,0 +1,41 @@
+const ACTIONS = {
+  CREATE:  'create',
+  READ:    'read',
+  UPDATE:  'update',
+  DELETE:  'delete',
+  MANAGE:  'manage',
+  PUBLISH: 'publish',
+  ENROLL:  'enroll',
+  ATTEMPT: 'attempt',
+  EXPORT:  'export',
+  IMPORT:  'import',
+  ASSIGN:  'assign',
+}
+
+const RESOURCES = {
+  ALL:          'all',
+  TENANT:       'Tenant',
+  USER:         'User',
+  ROLE:         'Role',
+  ORGANIZATION: 'Organization',
+  DEPARTMENT:   'Department',
+  GROUP:        'Group',
+  COURSE:       'Course',
+  MODULE:       'Module',
+  LESSON:       'Lesson',
+  LEARNING_PATH:'LearningPath',
+  ASSESSMENT:   'Assessment',
+  QUESTION:     'Question',
+  QUESTION_BANK:'QuestionBank',
+  ATTEMPT:      'AssessmentAttempt',
+  ENROLLMENT:   'Enrollment',
+  CERTIFICATE:  'Certificate',
+  ESIGN:        'ESign',
+  AUDIT_LOG:    'AuditLog',
+  REPORT:       'Report',
+  NOTIFICATION: 'Notification',
+  STORAGE:      'Storage',
+  SYSTEM:       'System',
+}
+
+module.exports = { ACTIONS, RESOURCES }

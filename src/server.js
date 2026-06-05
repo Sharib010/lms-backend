@@ -1,0 +1,27 @@
+require("dotenv").config();
+const http = require("http");
+const app = require("./app");
+const { connectDatabase } = require("./config/database");
+const { connectRedis } = require("./config/redis");
+const { startWorkers } = require("./jobs");
+const logger = require("./config/logger");
+
+const PORT = process.env.PORT || 6000;
+
+async function bootstrap() {
+  await connectDatabase();
+  await connectRedis();
+  await startWorkers();
+
+  const server = http.createServer(app);
+  server.listen(PORT, () => {
+    logger.info(`🚀 LMS API running on port ${PORT} [${process.env.NODE_ENV}]`);
+  });
+
+  process.on("unhandledRejection", (err) => {
+    logger.error("Unhandled Rejection:", err);
+    server.close(() => process.exit(1));
+  });
+}
+
+bootstrap();

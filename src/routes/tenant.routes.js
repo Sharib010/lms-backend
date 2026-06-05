@@ -1,0 +1,12 @@
+const { Router } = require('express')
+const c = require('../controllers/tenant.controller')
+const { authenticate } = require('../middleware/auth.middleware')
+const { requireSuperAdmin } = require('../middleware/rbac.middleware')
+const router = Router()
+router.use(authenticate, requireSuperAdmin)
+router.get('/',             c.getTenants)
+router.post('/',            c.createTenant)
+router.patch('/:id',        c.updateTenant)
+router.patch('/:id/suspend', c.suspend)
+router.patch('/:id/activate', c.activate)
+module.exports = router
