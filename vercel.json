@@ -5,7 +5,6 @@
       "src": "api/index.js",
       "use": "@vercel/node",
       "config": {
-        "includeFiles": ["src/**", "node_modules/**"],
         "nodeVersion": "20.x"
       }
     }
