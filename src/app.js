@@ -20,17 +20,20 @@ const app = express();
 // ── Security ──────────────────────────────────────────────────────────────
 app.use(helmet());
 
-// Allow CLIENT_URL env var (comma-separated for multiple origins)
-const allowedOrigins = (process.env.CLIENT_URL || 'http://localhost:3000')
-  .split(',')
-  .map(o => o.trim())
-  .filter(Boolean)
-
 app.use(cors({
   origin: (origin, cb) => {
-    // Allow requests with no origin (mobile apps, curl, Postman)
-    if (!origin || allowedOrigins.includes(origin)) return cb(null, true)
-    cb(new Error(`CORS: origin ${origin} not allowed`))
+    // Re-read on every invocation so cold-start env changes are picked up
+    const allowed = (process.env.CLIENT_URL || 'http://localhost:3000')
+      .split(',')
+      .map(o => o.trim())
+      .filter(Boolean)
+
+    // Allow no-origin requests (Postman, curl, mobile)
+    if (!origin) return cb(null, true)
+
+    if (allowed.includes(origin)) return cb(null, true)
+
+    cb(new Error(`CORS blocked: ${origin} — add it to CLIENT_URL in Vercel env vars`))
   },
   credentials: true,
 }))
